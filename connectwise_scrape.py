@@ -37,6 +37,7 @@ cw_api_id  = key_file_json['cw_id']
 cw_api_key = key_file_json['cw_key']
 cw_company = key_file_json['cw_company']
 cw_site    = key_file_json['cw_site']
+cw_client_id = key_file_json['cw_clientid']
 
 group_id = args.id
 
@@ -45,8 +46,8 @@ group_id = args.id
 ###################################
 
 # Build type dict
-type_dict = type_sync(AccessId, AccessKey, Company, group_id, cw_api_id, cw_api_key, cw_company, cw_site)
-company_dict = company_sync(AccessId, AccessKey, Company, cw_api_id, cw_api_key, cw_company, cw_site)
+type_dict = type_sync(AccessId, AccessKey, Company, group_id, cw_api_id, cw_api_key, cw_company, cw_site, cw_client_id)
+company_dict = company_sync(AccessId, AccessKey, Company, cw_api_id, cw_api_key, cw_company, cw_site, cw_client_id)
 
 # Request Info
 resourcePath = '/device/devices'
@@ -144,14 +145,14 @@ for item in devices:
 #############################
 
 for key, value in device_array.items():
-	get_body = get_cw_config_by_name(cw_api_id, cw_api_key, cw_company, cw_site, key)['body'].decode()
+	get_body = get_cw_config_by_name(cw_api_id, cw_api_key, cw_company, cw_site, cw_client_id, key)['body'].decode()
 	if(get_body == '[]'):
-		answer = post_cw_configuration(cw_api_id, cw_api_key, cw_company, cw_site, value)
+		answer = post_cw_configuration(cw_api_id, cw_api_key, cw_company, cw_site, cw_client_id, value)
 		if(answer['code'] == 200 or answer['code'] == 201):
 			print(f'Record for {key} successfully created')
 		else:
 			print(f'Unable to create record for {key} with response code {answer["code"]}')
-			second_attempt = post_cw_configuration(cw_api_id, cw_api_key, cw_company, cw_site, value)
+			second_attempt = post_cw_configuration(cw_api_id, cw_api_key, cw_company, cw_site, cw_client_id, value)
 			print(f'Second attempt has produced response code {second_attempt["code"]}')
 			print(f'Response Body')
 			print(f'=============')
@@ -160,12 +161,12 @@ for key, value in device_array.items():
 		get_json = json.loads(get_body)
 		get_id = get_json[0]['id']
 
-		patch_dict = patch_cw_configuration(cw_api_id, cw_api_key, cw_company, cw_site, value, get_id)
+		patch_dict = patch_cw_configuration(cw_api_id, cw_api_key, cw_company, cw_site, cw_client_id, value, get_id)
 		if(patch_dict['code'] == 200 or answer['code'] == 201):
 			print(f'Record for {key} successfully updated')
 		else:
 			print(f'Unable to update record for {key} with response code {answer["code"]}')
-			second_attempt = post_cw_configuration(cw_api_id, cw_api_key, cw_company, cw_site, value)
+			second_attempt = post_cw_configuration(cw_api_id, cw_api_key, cw_company, cw_site, cw_client_id, value)
 			print(f'Second attempt has produced response code {second_attempt["code"]}')
 			print(f'Response Body')
 			print(f'=============')

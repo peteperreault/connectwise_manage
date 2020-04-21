@@ -35,6 +35,7 @@ def company_sync(_lm_api_id, _lm_api_key, _lm_company, _cw_api_id, _cw_api_key, 
 def type_sync(_lm_api_id, _lm_api_key, _lm_company, _group_id, _cw_api_id, _cw_api_key, _cw_company, _cw_site):
 	lm_types = get_lm_device_types(_lm_api_id, _lm_api_key, _lm_company, _group_id)
 
+	# lm_types.keys() values are device type group names in LM. (pp)
 	for item in lm_types.keys():
 		get_result = get_cw_type_by_name(_cw_api_id, _cw_api_key, _cw_company, _cw_site, item)
 		response_body = get_result['body'].decode()
